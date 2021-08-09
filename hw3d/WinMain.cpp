@@ -54,7 +54,7 @@ int CALLBACK WinMain(
 	// register window class
 	WNDCLASSEX wc = { 0 };
 	wc.style = CS_OWNDC;
-
+	wc.cbSize = sizeof(wc);
 	/*
 		example , does not close the window even after pressing X 
 		does not assume anything about number of windows to act on therefore must be defined
