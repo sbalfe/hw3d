@@ -13,6 +13,10 @@ LRESULT CALLBACK WndProc( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 	case WM_CLOSE:
 		PostQuitMessage( 69 );
 		break;
+
+    /*
+		this does not care about the actual capital letter status
+	*/
 	case WM_KEYDOWN:
 		if( wParam == 'D' )
 		{
@@ -25,15 +29,38 @@ LRESULT CALLBACK WndProc( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 			SetWindowText( hWnd,"Dangerfield" );
 		}
 		break;
+
+	/*
+		deals with text input rather than other key down messages 
+		created after translate message of keydown.
+
+		F1 does not work for example.
+	*/
 	case WM_CHAR:
 		{
 			static std::string title;
+			/*
+				wparam is the ascii code of the title
+			*/
 			title.push_back( (char)wParam );
+
+			/*
+				set text to c string literal of title, 
+			*/
 			SetWindowText( hWnd,title.c_str() );
 		}
 		break;
+
+
+	/*
+		fetch x,y value of mouse.
+	*/
 	case WM_LBUTTONDOWN:
 		{
+			
+			/*
+				points is just a struct of the coordinates. 
+			*/
 			const POINTS pt = MAKEPOINTS( lParam );
 			std::ostringstream oss;
 			oss << "(" << pt.x << "," << pt.y << ")";
@@ -83,6 +110,9 @@ int CALLBACK WinMain(
 	BOOL gResult;
 	while( (gResult = GetMessage( &msg,nullptr,0,0 )) > 0 )
 	{
+		/*
+			generates wm char from the wm keydown message.
+		*/
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );
 	}
