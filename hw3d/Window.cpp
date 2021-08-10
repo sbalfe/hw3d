@@ -36,6 +36,22 @@ Window::WindowClass::WindowClass() noexcept
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = GetInstance();
+	/*
+		https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-loadimagea
+
+		hinst = get instance of class
+		hinst = get instance of class
+
+		makeintresource = takes the defined number value, for which load image understands
+
+		image_icon = type of the thing that we are loading.
+
+		image dimensions
+
+		fuload 
+
+
+	*/
 	wc.hIcon = static_cast<HICON>(LoadImage( 
 		GetInstance(),MAKEINTRESOURCE( IDI_ICON1 ),
 		IMAGE_ICON,32,32,0
@@ -80,6 +96,8 @@ Window::Window( int width,int height,const char* name )
 	{
 		throw CHWND_LAST_EXCEPT();
 	};
+
+	
 	// create window & get hWnd
 	hWnd = CreateWindow(
 		WindowClass::GetName(),name,
@@ -87,7 +105,7 @@ Window::Window( int width,int height,const char* name )
 		CW_USEDEFAULT,CW_USEDEFAULT,wr.right - wr.left,wr.bottom - wr.top,
 		nullptr,nullptr,WindowClass::GetInstance(),this
 	);
-	// check for error
+	// check for error in the actual window creation 
 	if( hWnd == nullptr )
 	{
 		throw CHWND_LAST_EXCEPT();
@@ -153,10 +171,14 @@ Window::Exception::Exception( int line,const char * file,HRESULT hr ) noexcept
 const char* Window::Exception::what() const noexcept
 {
 	std::ostringstream oss;
+
+	/*
+		returns type which is default chilli at this points
+	*/
 	oss << GetType() << std::endl
 		<< "[Error Code] " << GetErrorCode() << std::endl
 		<< "[Description] " << GetErrorString() << std::endl
-		<< GetOriginString();
+		<< GetOriginString(); /* base chilli exception on top of that */
 	whatBuffer = oss.str();
 	return whatBuffer.c_str();
 }
@@ -168,12 +190,50 @@ const char* Window::Exception::GetType() const noexcept
 
 std::string Window::Exception::TranslateErrorCode( HRESULT hr ) noexcept
 {
+	/*
+		buffer where the lookup string is copied to based on the HRESULT 
+	*/
 	char* pMsgBuf = nullptr;
 	// windows will allocate memory for err string and make our pointer point to it
+
+	/*
+		https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessage
+
+		3 values we gave for style:
+			formatMessageAllocateBuffer > gives us a buffer large enough to hold formatted message.
+			place pointer to allocated buffer address specfied by lBuffer which is pMsgBuf above
+
+			format message from system > search system message table resources for requested message
+
+			format message ignore inserts > insert sequences into the message definition such as %1 are ignored.
+				useful in fetching a message for later formatting, if set, args parameter is ignored
+
+		OTHER PARAMS
+
+		lpSource = nullptr, location of message definition
+
+		dwMessageID = hr, message identifier for requested message
+			> this parameter ignored if dwflags include formate message from string
+
+		dwLanguageID = MAKELANGID( LANG_NEUTRAL,SUBLANG_DEFAULT ), set language 
+
+		lpbuffer = pMsgBuf , holds null termianted string to define the message
+
+		nSize, not applicable here but sets size of output buffer
+
+		arguments , null , used as insert values for the specific message.
+
+	*/
+	/*
+		returns length of error string.
+	*/
 	DWORD nMsgLen = FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		nullptr,hr,MAKELANGID( LANG_NEUTRAL,SUBLANG_DEFAULT ),
+		/*
+			expects a pointer to pointer therefore perfomr type coerciion
+		*/
 		reinterpret_cast<LPSTR>(&pMsgBuf),0,nullptr
 	);
 	// 0 string length returned indicates a failure

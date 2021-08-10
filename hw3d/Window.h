@@ -28,15 +28,31 @@ public:
 	class Exception : public ChiliException
 	{
 	public:
+		/*
+			exception takes in the line, file and HRESULT which is a default error hadnling thing for windows
+		*/
 		Exception( int line,const char* file,HRESULT hr ) noexcept;
+
+		/* what overloaded of course */
 		const char* what() const noexcept override;
+
+		/* should really have been overriden */
 		virtual const char* GetType() const noexcept;
+
+		/* figure out what the error was, returns descriptive string */
 		static std::string TranslateErrorCode( HRESULT hr ) noexcept;
+
+		/* just returns HRESULT error code */
 		HRESULT GetErrorCode() const noexcept;
+
+		/* calls translate error code with the current hr stored.*/
 		std::string GetErrorString() const noexcept;
 	private:
 		HRESULT hr;
 	};
+/*
+* ensure window class is private
+*/
 private:
 	// singleton manages registration/cleanup of window class
 	class WindowClass
@@ -70,5 +86,23 @@ private:
 
 
 // error exception helper macro
+
+/*
+	helps us find the file and line number where the exception was thrown frome 
+
+	__LINE__ = line number
+
+	__FILE__ = File thrown from
+
+	just takes in some HRESULT etc, this is called when ever an error occurs 
+
+	get last error just passes in the previous threads error.
+*/
+
 #define CHWND_EXCEPT( hr ) Window::Exception( __LINE__,__FILE__,hr )
+
+/*
+	some dont return an erro code therefore call get last to obtain what it actually was
+*/
+
 #define CHWND_LAST_EXCEPT() Window::Exception( __LINE__,__FILE__,GetLastError() )

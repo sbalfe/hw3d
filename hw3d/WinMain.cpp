@@ -28,7 +28,7 @@ int CALLBACK WinMain(
 {
 	try
 	{
-		Window wnd( 800,300,"Donkey Fart Box" );
+		Window wnd( 800, 600, "Donkey Fart Box" );
 
 		MSG msg;
 		BOOL gResult;
@@ -48,14 +48,34 @@ int CALLBACK WinMain(
 		// wParam here is the value passed to PostQuitMessage
 		return msg.wParam;
 	}
+	/*
+		check for defualt chilli exception 
+		https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-messagebox
+
+		handle to window owner = nullptr
+
+		what message to dispaly = e.what()
+
+		dialog box title = e.getType()
+
+		utype = mb_ok, mb_iconexclamation
+			first = display ok button 
+			second = exclamation mark appears 
+	*/
 	catch( const ChiliException& e )
 	{
 		MessageBox( nullptr,e.what(),e.GetType(),MB_OK | MB_ICONEXCLAMATION );
 	}
+	/*
+	  catch any standard exception
+	*/
 	catch( const std::exception& e )
 	{
 		MessageBox( nullptr,e.what(),"Standard Exception",MB_OK | MB_ICONEXCLAMATION );
 	}
+	/*
+		catch unknown exceptions
+	*/
 	catch( ... )
 	{
 		MessageBox( nullptr,"No details available","Unknown Exception",MB_OK | MB_ICONEXCLAMATION );

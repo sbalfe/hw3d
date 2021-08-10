@@ -29,10 +29,24 @@ ChiliException::ChiliException( int line,const char* file ) noexcept
 
 const char* ChiliException::what() const noexcept
 {
+	/*
+		const char * > points to memory
+		if we just return oss.str.c_str() > pointer dies at the end of the function.
+
+		pointer points to dead memory.
+
+		therefore return the whatbuffer as the value to hold the what value.
+	*/
 	std::ostringstream oss;
 	oss << GetType() << std::endl
 		<< GetOriginString();
+
 	whatBuffer = oss.str();
+
+	/*
+		return the pointer to the std::string in what buffer instead.
+		
+	*/
 	return whatBuffer.c_str();
 }
 

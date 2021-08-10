@@ -21,18 +21,32 @@
 #include <exception>
 #include <string>
 
+/*
+* inherits from the std::exceptions values 
+*/
 class ChiliException : public std::exception
 {
 public:
 	ChiliException( int line,const char* file ) noexcept;
+	/*
+		overrided the virtual function defined in std::exception 
+	*/
 	const char* what() const noexcept override;
 	virtual const char* GetType() const noexcept;
 	int GetLine() const noexcept;
 	const std::string& GetFile() const noexcept;
 	std::string GetOriginString() const noexcept;
 private:
+	/*
+		line number and the file it was thrown from.
+	*/
 	int line;
 	std::string file;
-protected:
+
+protected: // allows derived classes to access it , different to private which is local.
+	/*
+		made it mutable so it can be modified in the what() function 
+		to allow it to be set from within what()
+	*/
 	mutable std::string whatBuffer;
 };
