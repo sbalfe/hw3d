@@ -12,6 +12,13 @@
 #define WM_UAHMEASUREMENUITEM 0x0094
 #define WM_UAHNCPAINTMENUPOPUP 0x0095
 
+/* macro takes in the windows message, and outputs msg, msg which is the string literal*/
+
+/*
+	replaces the register(msg) with the values in the end , therefore msg / string of message 
+
+	this replaces the keyword with the paramter with an initialzer list used for filling the values of the map.
+*/
 #define REGISTER_MESSAGE(msg){msg,#msg}
 
 WindowsMessageMap::WindowsMessageMap()
@@ -200,22 +207,51 @@ WindowsMessageMap::WindowsMessageMap()
 	} )
 {}
 
+/*
+	functor that calls the map with the message and l/w params to output to the debug stream
+*/
 std::string WindowsMessageMap::operator()( DWORD msg,LPARAM lp,WPARAM wp ) const
 {
+	/* define width as in the stream offset from the start */
 	constexpr int firstColWidth = 25;
+
+	/*acces value from the key and returns iterator to that element. */
 	const auto i = map.find( msg );
 
+	/*
+		string output stream builder 
+	*/
 	std::ostringstream oss;
+
+	/*
+	* keep reading map till the end
+	*/
 	if( i != map.end() )
 	{
+		/*
+			left align, set width to specified ammount 
+
+			leaves 25 char spaces betwen the value
+
+			right align after sending as to create a column effect.
+		*/
 		oss << std::left << std::setw( firstColWidth ) << i->second << std::right;
 	}
 	else
 	{
+		/*
+			output the unknown message.
+		*/
 		std::ostringstream padss;
 		padss << "Unknown message: 0x" << std::hex << msg;
 		oss << std::left << std::setw( firstColWidth ) << padss.str() << std::right;
 	}
+
+	/*
+		output contents of lparam and wparam if they are present
+		this is just hex code value align to the right, this value is dependent on the command, unique data as such 
+		such as mouse position.
+	*/
 	oss << "   LP: 0x" << std::hex << std::setfill( '0' ) << std::setw( 8 ) << lp;
 	oss << "   WP: 0x" << std::hex << std::setfill( '0' ) << std::setw( 8 ) << wp << std::endl;
 

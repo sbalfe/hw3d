@@ -2,20 +2,32 @@
 #include "WindowsMessageMap.h"
 #include <sstream>
 
+// https://wiki.winehq.org/List_Of_Windows_Messages , lists of all windows messages. 
 
 LRESULT CALLBACK WndProc( HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam )
 {
 	static WindowsMessageMap mm;
-	OutputDebugString( mm( msg,lParam,wParam ).c_str() );
+	
+	/*
+		attach debugger first to view this. 
+	*/
+	OutputDebugStringA( mm( msg,lParam,wParam ).c_str() );
 
 	switch( msg )
 	{
 	case WM_CLOSE:
 		PostQuitMessage( 69 );
 		break;
+
+   /*
+	check for keydown , then check for which character was placed 
+   */
 	case WM_KEYDOWN:
 		if( wParam == 'D' )
 		{
+			/*
+				handle to window, change the titlle
+			*/
 			SetWindowText( hWnd,"Respects" );
 		}
 		break;
