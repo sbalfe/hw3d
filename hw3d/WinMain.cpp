@@ -26,10 +26,22 @@ int CALLBACK WinMain(
 	LPSTR     lpCmdLine,
 	int       nCmdShow )
 {
+	/*
+		call our window which starts it and the message loop 
+
+		they share the same message loops so closing one closes all.
+	*/
 	Window wnd( 800,300,"Donkey Fart Box" );
+	Window wnd2(300, 400, "sex");
 
 	MSG msg;
 	BOOL gResult;
+
+	/*
+		WM_CLOSE calls and returns 0, calling destructor once when the wnd goes out of scope
+
+		ignores default windows handling of this method
+	*/
 	while( (gResult = GetMessage( &msg,nullptr,0,0 )) > 0 )
 	{
 		// TranslateMessage will post auxilliary WM_CHAR messages from key msgs

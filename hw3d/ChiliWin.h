@@ -21,10 +21,16 @@
 
 // target Windows 7 or later
 #define _WIN32_WINNT 0x0601
-#include <sdkddkver.h>
+#include <sdkddkver.h> /*
+	includes the sdk verison to control the functions and constants we have access to in windows.h
+*/
 // The following #defines disable a bunch of unused windows stuff. If you 
 // get weird errors when trying to do some windows stuff, try removing some
 // (or all) of these defines (it will increase build time though).
+
+/*
+	turn off lots of switches to stop it fucking up our program
+*/
 #define WIN32_LEAN_AND_MEAN
 #define NOGDICAPMASKS
 #define NOSYSMETRICS
@@ -42,7 +48,7 @@
 #define NONLS
 #define NOMEMMGR
 #define NOMETAFILE
-#define NOMINMAX
+#define NOMINMAX // affects std::min and std::max
 #define NOOPENFILE
 #define NOSCROLL
 #define NOSERVICE
