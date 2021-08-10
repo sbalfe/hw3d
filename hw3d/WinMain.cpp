@@ -56,7 +56,8 @@ int CALLBACK WinMain(
 	*/
 	wc.lpfnWndProc = DefWindowProc;
 
-	/* extra bytes after allocation of window class structure */
+	/* extra bytes after allocation of window class structure
+	https://stackoverflow.com/questions/13330225/cbclsextra-and-cbwndextra*/
 	wc.cbClsExtra = 0;
 
 	/* 
